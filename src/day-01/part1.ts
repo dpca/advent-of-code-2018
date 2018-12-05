@@ -29,35 +29,11 @@ Here are other example situations:
 Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have been applied?
 */
 
-import * as fs from 'fs';
-import * as path from 'path';
-import * as readline from 'readline';
-
-const inputPath = path.join(__dirname, 'input.txt');
-
-const lineReader = readline.createInterface({
-  input: fs.createReadStream(inputPath),
-});
+import { changeFrequency, getInputData } from './lib';
 
 function getFrequency() {
-  let frequency = 0;
-
-  lineReader.on('line', (line) => {
-    const value = Number(line.slice(1));
-    if (line.startsWith('+')) {
-      frequency += value;
-    } else {
-      frequency -= value;
-    }
-  });
-
-  return new Promise((resolve) => {
-    lineReader.on('close', () => {
-      resolve(frequency);
-    });
-  });
+  const inputData = getInputData();
+  return inputData.reduce(changeFrequency, 0);
 }
 
-getFrequency().then((frequency) => {
-  console.log(`Final frequency: ${frequency}`);
-});
+console.log(`Final frequency: ${getFrequency()}`);
