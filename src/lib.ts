@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-export function getInputData(inputFile: string) {
+export function getInputData(inputFile: string): string[] {
   const inputData = fs
     .readFileSync(inputFile)
     .toString()
@@ -17,4 +17,8 @@ export function changeFrequency(frequency: number, line: string) {
     return frequency + value;
   }
   return frequency - value;
+}
+
+export function objectValues<Val>(obj: { [key: string]: Val }): Val[] {
+  return Object.keys(obj).map((key) => obj[key]);
 }
