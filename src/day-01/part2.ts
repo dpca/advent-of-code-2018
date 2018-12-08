@@ -25,13 +25,15 @@ Here are other examples:
 What is the first frequency your device reaches twice?
 */
 
-import { changeFrequency, getInputData } from './lib';
+import * as path from 'path';
+
+import { changeFrequency, getInputData } from '../lib';
 
 function findRepeatFrequency(
   seenFrequencies = new Set(),
   startingFrequency = 0
 ) {
-  const inputData = getInputData();
+  const inputData = getInputData(path.join(__dirname, 'input.txt'));
   let frequency = startingFrequency;
 
   let found = false;

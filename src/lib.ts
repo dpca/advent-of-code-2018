@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-export function getInputData() {
-  const inputFile = path.join(__dirname, 'input.txt');
+export function getInputData(inputFile: string) {
   const inputData = fs
     .readFileSync(inputFile)
     .toString()

@@ -29,10 +29,12 @@ Here are other example situations:
 Starting with a frequency of zero, what is the resulting frequency after all of the changes in frequency have been applied?
 */
 
-import { changeFrequency, getInputData } from './lib';
+import * as path from 'path';
+
+import { changeFrequency, getInputData } from '../lib';
 
 function getFrequency() {
-  const inputData = getInputData();
+  const inputData = getInputData(path.join(__dirname, 'input.txt'));
   return inputData.reduce(changeFrequency, 0);
 }
 
