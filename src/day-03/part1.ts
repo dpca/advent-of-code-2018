@@ -50,13 +50,18 @@ import * as path from 'path';
 
 import { getInputData } from '../lib';
 
-interface Claim {
+export type Claim = {
   id: number;
   left: number;
   top: number;
   width: number;
   height: number;
-}
+};
+
+type Fabric = number[][];
+
+const FABRIC_WIDTH = 1000;
+const FABRIC_HEIGHT = 1000;
 
 function parseInput(line: string): Claim {
   const match = line.match(/#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/);
@@ -72,30 +77,44 @@ function parseInput(line: string): Claim {
   };
 }
 
-const FABRIC_WIDTH = 1000;
-const FABRIC_HEIGHT = 1000;
-
-function findOverlappingFabric() {
+export function getClaims(): Claim[] {
   const inputData = getInputData(path.join(__dirname, 'input.txt'));
-  const claims = inputData.map(parseInput);
+  return inputData.map(parseInput);
+}
 
+export function makeFabric(): Fabric {
   // 2D array of fabric
-  const fabric: number[][] = Array.from(Array(FABRIC_WIDTH), () =>
-    Array(FABRIC_HEIGHT).fill(0)
-  );
+  return Array.from(Array(FABRIC_WIDTH), () => Array(FABRIC_HEIGHT).fill(0));
+}
 
-  claims.forEach((claim) => {
-    [...Array(claim.width)].forEach((_, x) => {
-      [...Array(claim.height)].forEach((_, y) => {
-        fabric[claim.left + x][claim.top + y] += 1;
-      });
+export function claimPositions(claim: Claim): { x: number; y: number }[] {
+  const positions = [];
+  [...Array(claim.width)].forEach((_, x) => {
+    [...Array(claim.height)].forEach((_, y) => {
+      positions.push({ x: claim.left + x, y: claim.top + y });
     });
   });
+  return positions;
+}
+
+export function addClaimsToFabric(fabric: Fabric, claims: Claim[]): void {
+  claims.forEach((claim) => {
+    claimPositions(claim).forEach(({ x, y }) => {
+      fabric[x][y] += 1;
+    });
+  });
+}
+
+function findOverlappingFabric(): number {
+  const claims = getClaims();
+  const fabric = makeFabric();
+  addClaimsToFabric(fabric, claims);
 
   return fabric.reduce(
     (count, rows) =>
       count +
       rows.reduce((rowCount, position) => {
+        // if a square of fabric has more than one claim, count it towards the total
         if (position > 1) {
           return rowCount + 1;
         }
@@ -105,6 +124,8 @@ function findOverlappingFabric() {
   );
 }
 
-console.log(
-  `Square inches within two or more claims: ${findOverlappingFabric()}`
-);
+if (require.main === module) {
+  console.log(
+    `Square inches within two or more claims: ${findOverlappingFabric()}`
+  );
+}
